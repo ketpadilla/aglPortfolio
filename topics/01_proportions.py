@@ -52,3 +52,5 @@ def fraction2Percent():
 
 # Call function
 print(fraction2Percent())
+
+# --- #
