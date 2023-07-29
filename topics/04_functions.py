@@ -105,7 +105,7 @@ plt.show() # Display the figure
 
 # --- #
 
-# * Plot a line using a function
+# * Plot a line using an array of x values
 # ! Import numpy
 import numpy as np
 # ! Initialize variables
@@ -177,14 +177,14 @@ plt.show()
 # ax.grid(True)
 
 # * Setting axis ticks
-# ax.set_xticks(np.arange(xmin, xmax, 1))
-# ax.set_yticks(np.arange(ymin, ymax, 1))
+# ax.set_xticks(np.arange(xmin, xmax, space))
+# ax.set_yticks(np.arange(ymin, ymax, space))
 
 # * Plotting points and lines with labels
 # ! Line color will automatically be different from points and other lines if not specified
 # ! Color options: b, g, r, c, m, y, k, w
 # plt.plot(x,y, label='name')
-# plt.plot([#],[#], 'color', label='name')
+# plt.plot([x-value],[y-value], 'color', label='name')
 
 # * Showing legend and graph
 # plt.legend()
