@@ -108,7 +108,19 @@ def solve_equations():
     return print("No solutions found.")
 
 
-# TODO: SOLVE PROPORTIONS
+def solve_proportions():
+    # Get numbers from user 
+    inputs = input("Enter numbers to solve a proportion, place 'x' for unknown number, separate each ratio with a space: ").split()
+    # Split each ratio into numerator and denominator
+    ratios = [ratio.split("/") for ratio in inputs]
+    # Check if there are 3 numbers and 1 unknown given format [['2', '3'], ['4', 'x']]
+    if len(ratios) != 2 or len(ratios[0]) != 2 or len(ratios[1]) != 2:
+        return print("Invalid input. Please try again.")
+    # Solve the proportion using sympy
+    answer = solve(Eq(sympify(f"{ratios[0][0]} / {ratios[0][1]}"), sympify(f"{ratios[1][0]} / {ratios[1][1]}")))
+    # Print the answer dynamically
+    return print(f"The solution to {inputs[0]} = {inputs[1]} is x = {pretty(answer[0])}.")
+    
 
 # TODO: FACTOR SQUARE ROOTS
 
@@ -120,7 +132,7 @@ def solve_equations():
 
 
 # INITIALIZE GLOBAL VARIABLES
-options = {'a': add,'b': subtract,'c': multiply,'d': divide, 'e': detect_prime, 'f': generate_prime_factors, 'g': generate_square_roots, 'h': solve_equations}
+options = {'a': add,'b': subtract,'c': multiply,'d': divide, 'e': detect_prime, 'f': generate_prime_factors, 'g': generate_square_roots, 'h': solve_equations, 'i': solve_proportions}
 
 
 # MENU SELECTION
