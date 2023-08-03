@@ -108,6 +108,17 @@ def solve_equations():
     return print("No solutions found.")
 
 
+# TODO: SOLVE PROPORTIONS
+
+# TODO: FACTOR SQUARE ROOTS
+
+# TODO: CONVERT DECIMALS TO FRACTIONS AND PERCENTAGE
+
+# TODO: CONVERT FRACTIONS TO DECIMALS AND PERCENTAGE
+
+# TODO: CONVERT PERCENTAGE TO DECIMALS AND FRACTIONS
+
+
 # INITIALIZE GLOBAL VARIABLES
 options = {'a': add,'b': subtract,'c': multiply,'d': divide, 'e': detect_prime, 'f': generate_prime_factors, 'g': generate_square_roots, 'h': solve_equations}
 
