@@ -3,21 +3,33 @@
 
 # OPERATIONS
 def add():
-    return
+    inputs = [int(i) for i in input("Enter numbers to add, separate each number with a space: ").split()]
+    return print(f"The sum of {' + '.join(map(str, inputs))} is {sum(inputs)}")
 
 
 def subtract():
-    return
+    inputs = [int(i) for i in input("Enter numbers to subtract, separate each number with a space: ").split()]
+    return print(f"The difference of {' - '.join(map(str, inputs))} is {inputs[0] - sum(inputs[1:])}")
 
 
 def multiply():
-    return
+    inputs = [int(i) for i in input("Enter numbers to multiply, separate each number with a space: ").split()]
+    product = 1
+    for number in inputs:
+        product *= number
+    return print(f"The product of {' * '.join(map(str, inputs))} is {product}")
 
 
 def divide():
-    return
+    inputs = [int(i) for i in input("Enter numbers to divide, separate each number with a space: ").split()]
+    quotient = inputs[0]
+    for number in inputs[1:]:
+        quotient /= number
+    return print(f"The quotient of {' / '.join(map(str, inputs))} is {quotient}")
+
 
 # TODO: add other operations
+
 
 # INITIALIZE GLOBAL VARIABLES
 options = {'a': add,'b': subtract,'c': multiply,'d': divide}
