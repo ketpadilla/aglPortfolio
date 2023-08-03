@@ -108,6 +108,7 @@ def solve_equations():
     return print("No solutions found.")
 
 
+# SOLVE PROPORTIONS
 def solve_proportions():
     # Get numbers from user 
     inputs = input("Enter numbers to solve a proportion, place 'x' for unknown number, separate each ratio with a space: ").split()
@@ -122,17 +123,56 @@ def solve_proportions():
     return print(f"The solution to {inputs[0]} = {inputs[1]} is x = {pretty(answer[0])}.")
     
 
-# TODO: FACTOR SQUARE ROOTS
+# DECIMALS TO FRACTIONS AND PERCENTAGE
+def convert_decimals():
+    # Get number from user
+    number = float(input("Enter a decimal to convert to a fraction and percentage: "))
+    # Get number of decimal places
+    places = len(str(number).split(".")[1])
+    # Get the numerator and denominator
+    numerator = int(number * 10**places)
+    denominator = 10**places
+    # Get the percentage
+    percentage = to_percentage(numerator,denominator)
+    # Print the fraction and percentage
+    return print(f"{number} = {numerator}/{denominator} = {percentage}%")
+    
 
-# TODO: CONVERT DECIMALS TO FRACTIONS AND PERCENTAGE
+# CONVERT FRACTIONS TO DECIMALS AND PERCENTAGE
+def convert_fractions():
+    # Get fraction from user
+    fraction = input("Enter a fraction to convert to a decimal and percentage: ")
+    # Get the numerator and denominator
+    numerator, denominator = map(int, fraction.split("/"))
+    # Get the decimal, round to 2 decimal places
+    decimal = to_decimal(numerator, denominator)
+    # Get the percentage
+    percentage = round(to_percentage(numerator,denominator), 2)
+    # Print the decimal and percentage
+    return print(f"{fraction} = {decimal} = {percentage}%")
 
-# TODO: CONVERT FRACTIONS TO DECIMALS AND PERCENTAGE
 
-# TODO: CONVERT PERCENTAGE TO DECIMALS AND FRACTIONS
+# PERCENTAGE TO DECIMALS AND FRACTIONS
+def convert_percentage():
+    # Get percentage from user, remove the percent sign
+    percentage = float(input("Enter a percentage to convert to a decimal and fraction: ").replace("%", ""))
+    # Get the decimal, round to 2 decimal places
+    decimal = to_decimal(percentage, 100)
+    # Print the decimal and fraction
+    return print(f"{percentage}% = {decimal} = {str((int(percentage)))} / 100")
+
+
+# CONVERT TO PERCENTAGE HELPER FUNCTION
+def to_percentage(numerator, denominator):
+    return numerator / denominator * 100
+
+# CONVERT TO DECIMAL HELPER FUNCTION
+def to_decimal(numerator, denominator):
+    return round(numerator / denominator, 2)
 
 
 # INITIALIZE GLOBAL VARIABLES
-options = {'a': add,'b': subtract,'c': multiply,'d': divide, 'e': detect_prime, 'f': generate_prime_factors, 'g': generate_square_roots, 'h': solve_equations, 'i': solve_proportions}
+options = {'a': add,'b': subtract,'c': multiply,'d': divide, 'e': detect_prime, 'f': generate_prime_factors, 'g': generate_square_roots, 'h': solve_equations, 'i': solve_proportions, 'j': convert_decimals, 'k': convert_fractions, 'l': convert_percentage}
 
 
 # MENU SELECTION
