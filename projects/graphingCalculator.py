@@ -8,8 +8,10 @@ def graph(): # ! Sample
     return 
 
 
-# INITIALIZE GLOBAL VARIABLE
+# INITIALIZE VARIABLES
 options = {'a': graph}
+graphDimensions = {'xmin': 0, 'ymin': 0, 'xmax': 0, 'ymax': 0}
+fontSize = max(9, 2 * min((graphDimensions['xmax'] - graphDimensions['xmin']), (graphDimensions['ymax'] - graphDimensions['ymin'])))
 
 
 # MENU SELECTION
