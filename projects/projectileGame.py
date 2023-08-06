@@ -1,7 +1,7 @@
 # LIBRARIES
 import matplotlib.pyplot as plt
 from random import randint
-import numpy as np
+from numpy import linspace, sqrt, sin, cos, tan, arctan
 
 
 # INITIALIZE VARIABLES
@@ -26,15 +26,15 @@ def trajectory(wallDimensions):
     gravity = 9.81
     maxHeight, distance = wallDimensions['y'][1] + 1, wallDimensions['x'][0]
     # Calculate angle of launch and initial velocity so that the rocket hits reaches maximum height at the top of the wall
-    launchAngle = round(np.arctan((2 * maxHeight) / distance),2)
-    initialVelocity = round(np.sqrt((gravity * distance**2) / (2 * np.cos(launchAngle)**2 * (distance * np.tan(launchAngle) - maxHeight))),2)
+    launchAngle = round(arctan((2 * maxHeight) / distance),2)
+    initialVelocity = round(sqrt((gravity * distance**2) / (2 * cos(launchAngle)**2 * (distance * tan(launchAngle) - maxHeight))),2)
     # Calculate maximum height of rocket
-    maxHeight = round((initialVelocity**2 * np.sin(launchAngle)**2) / (2 * gravity),2)
+    maxHeight = round((initialVelocity**2 * sin(launchAngle)**2) / (2 * gravity),2)
     # Calculate time of flight
-    flightTime = round((2 * initialVelocity * np.sin(launchAngle)) / gravity,2)
+    flightTime = round((2 * initialVelocity * sin(launchAngle)) / gravity,2)
     # Calculate x and y coordinates of rocket
-    pathX = np.linspace(0, distance, 100)
-    pathY = (pathX * np.tan(launchAngle)) - ((gravity * pathX**2) / (2 * initialVelocity**2 * np.cos(launchAngle)**2))
+    pathX = linspace(0, distance, 100)
+    pathY = (pathX * tan(launchAngle)) - ((gravity * pathX**2) / (2 * initialVelocity**2 * cos(launchAngle)**2))
     # Return path coordinates, launch angle (in degrees), initial velocity, and flight time
     return pathX, pathY, launchAngle, initialVelocity, flightTime
 
@@ -81,16 +81,18 @@ def graph(graphDimensions, wallDimensions):
 # Check answer
 def check(initialVelocity, answer, score):
     # Check if answer is within 0.03 of the initial velocity
-    if abs(float(answer) - initialVelocity) <= 0.03:
+    if round(abs(float(answer) - initialVelocity),2) <= 0.03:
         print("Correct!")
         score['correct'] += 1
     else:
         print("Incorrect!")
         print("The correct answer is", initialVelocity)
+    # Update total number of questions
     score['total'] += 1
     return score
 
-# Play again by reinitializing variables
+
+# REINITIALIZE VARIABLES
 def again(distance, wallDimensions, graphDimensions, fontSize):
     # Initialize wall dimensions
     distance = randint(5, 15)
@@ -99,6 +101,8 @@ def again(distance, wallDimensions, graphDimensions, fontSize):
     graphDimensions = {'xmin': -1, 'ymin': -1, 'xmax': wallDimensions['x'][0] + 3, 'ymax': wallDimensions['y'][1] + 3}
     # Initialize font size
     fontSize = max(9, 2 * min((graphDimensions['xmax'] - graphDimensions['xmin']) / distance, (graphDimensions['ymax'] - graphDimensions['ymin']) / distance))
+    # Reinitialize graph
+    fig, ax = plt.subplots()
     return distance, wallDimensions, graphDimensions, fontSize
 
 
@@ -113,13 +117,12 @@ def main(maxHeight, distance, wallDimensions, graphDimensions, fontSize, score):
     score = check(initialVelocity, answer, score)
     # Ask user if they want to play again
     playAgain = input(f"Your current score is {score['correct']}/{score['total']}. Would you like to play again? (y/n): ")
-    if playAgain == 'y':
-        distance, wallDimensions, graphDimensions, fontSize = again(distance, wallDimensions, graphDimensions, fontSize)
-        score = main(wallDimensions['y'][1] + 1, distance, wallDimensions, graphDimensions, fontSize, score)
-    else:
+    if playAgain != 'y':
         print("Thanks for playing!")
-        score = {'correct': 0, 'total': 0}
-    return score
+        return {'correct': 0, 'total': 0}
+    distance, wallDimensions, graphDimensions, fontSize = again(distance, wallDimensions, graphDimensions, fontSize)
+    return main(wallDimensions['y'][1] + 1, distance, wallDimensions, graphDimensions, fontSize, score)
+
 
 
 # * RUN PROGRAM
