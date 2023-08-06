@@ -77,7 +77,6 @@ def graph(graphDimensions, wallDimensions):
     return launchAngle, initialVelocity, flightTime
 
 
-
 # Check answer
 def check(initialVelocity, answer, score):
     # Check if answer is within 0.03 of the initial velocity
@@ -122,7 +121,6 @@ def main(maxHeight, distance, wallDimensions, graphDimensions, fontSize, score):
         return {'correct': 0, 'total': 0}
     distance, wallDimensions, graphDimensions, fontSize = again(distance, wallDimensions, graphDimensions, fontSize)
     return main(wallDimensions['y'][1] + 1, distance, wallDimensions, graphDimensions, fontSize, score)
-
 
 
 # * RUN PROGRAM
