@@ -1,22 +1,61 @@
+# TODO:
+# Display the graph and a table of values for any "y=" equation input
+# Solve a system of two equations without graphing
+# Graph two equations and plot the point of intersection
+# Given a, b and c in a quadratic equation, plot the roots and vertex
+
+
+
 # LIBRARIES
 import matplotlib.pyplot as plt
+from sympy import symbols
+from numpy import linspace
 ...
 
 
+# INITIALIZE GRAPH
+fig, ax = plt.subplots()
+
+
+# HELPER FUNCTIONS
+def set_graph_design():
+    return
+
+
+def create_table_of_values():
+    return
+
+
+def shade_area():
+    return
+
+
 # FUNCTIONS
-def graph(): # ! Sample
-    return 
+def graph_linear_functions(): # ! Sample
+    return print("Graphing functions...")
+
+
+def solve_and_graph_system_of_equations():
+    return print("Solving and graphing system of equations...")
+
+
+def graph_two_equations_and_plot_point_of_intersection():
+    return print("Graphing two equations and plotting point of intersection...")
+
+
+def graph_a_quadratic_equation():
+    return print("Graphing a quadratic equation...")
 
 
 # INITIALIZE VARIABLES
-options = {'a': graph}
-graphDimensions = {'xmin': 0, 'ymin': 0, 'xmax': 0, 'ymax': 0}
+options = {'a': graph_linear_functions, 'b': solve_and_graph_system_of_equations, 'c': graph_two_equations_and_plot_point_of_intersection, 'd': graph_a_quadratic_equation}
+graphDimensions = {'xmin': -15, 'ymin': -15, 'xmax': 15, 'ymax': 15}
 fontSize = max(9, 2 * min((graphDimensions['xmax'] - graphDimensions['xmin']), (graphDimensions['ymax'] - graphDimensions['ymin'])))
 
 
 # MENU SELECTION
 def menu():
-    global options
+    global options, graphDimensions, fontSize
     while True:
         # Print the options
         for key, value in options.items():
