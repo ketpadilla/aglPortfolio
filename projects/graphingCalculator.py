@@ -13,12 +13,31 @@ from numpy import linspace
 ...
 
 
-# INITIALIZE GRAPH
-fig, ax = plt.subplots()
-
-
 # HELPER FUNCTIONS
-def set_graph_design():
+def graph(functions):
+    # ! SET INITIAL GRAPH DESIGN
+    # Set axis lines to dashed black
+    plt.plot([graphDimensions['xmin'], graphDimensions['xmax']], [0, 0], 'k--')
+    plt.plot([0, 0], [graphDimensions['ymin'], graphDimensions['ymax']], 'k--')
+    # Show grid with 0.5 spacing
+    plt.xticks(range(graphDimensions['xmin'], graphDimensions['xmax']+1), fontsize=fontSize-10)
+    plt.yticks(range(graphDimensions['ymin'], graphDimensions['ymax']+1), fontsize=fontSize-10)
+    plt.grid(which='both', ls='--', lw=0.5, color='gray', alpha=0.5)
+    # Set title
+    # ! SET COORDINATES
+    # Initialize an array of x values
+    xValues = linspace(graphDimensions['xmin'], graphDimensions['xmax'], 10)
+    
+    # TODO: SET Y VALUES
+
+    # TODO: CHANGE CODE
+    for key, value in options.items():
+        plt.title(f"{value.__name__.replace('_',' ').title()}", fontsize=fontSize)
+
+    # TODO: PLOT FUNCTION
+
+    # ! SHOW GRAPH
+    plt.show()
     return
 
 
@@ -31,8 +50,22 @@ def shade_area():
 
 
 # FUNCTIONS
-def graph_linear_functions(): # ! Sample
-    return print("Graphing functions...")
+def graph_linear_functions():
+    x = symbols('x')
+    # Get the number of functions to graph
+    numberOfFunctions = int(input("How many functions would you like to graph? "))
+    # Get the functions to graph
+    functions = []
+    for i in range(1, numberOfFunctions + 1):
+        # Get string input for the function
+        function = input(f"Enter function: y{i} = ")
+        # Get coefficients (m and b)
+        coefficients = [coefficient.strip() for coefficient in function.split('x')]
+        m = int(coefficients[0]) if coefficients[0] != '' else 1
+        b = int(coefficients[1]) if len(coefficients) > 1 and coefficients[1] != '' else 0
+        # Create then append the function to the list of functions
+        functions.append(m * x + b)
+    return functions
 
 
 def solve_and_graph_system_of_equations():
@@ -50,7 +83,7 @@ def graph_a_quadratic_equation():
 # INITIALIZE VARIABLES
 options = {'a': graph_linear_functions, 'b': solve_and_graph_system_of_equations, 'c': graph_two_equations_and_plot_point_of_intersection, 'd': graph_a_quadratic_equation}
 graphDimensions = {'xmin': -15, 'ymin': -15, 'xmax': 15, 'ymax': 15}
-fontSize = max(9, 2 * min((graphDimensions['xmax'] - graphDimensions['xmin']), (graphDimensions['ymax'] - graphDimensions['ymin'])))
+fontSize = max(9, (graphDimensions['xmax'] - graphDimensions['xmin']) / 2)
 
 
 # MENU SELECTION
@@ -74,7 +107,10 @@ def main():
     # Menu selection
     selectedOption = menu()
     # Call the function based on the user's choice
-    options.get(selectedOption[0], lambda: print("Error: Invalid option."))()
+    functions = options.get(selectedOption[0], lambda: print("Error: Invalid option."))()
+    # Create graph
+    fig, ax = plt.subplots()
+    graph(functions)
     return
 
 
