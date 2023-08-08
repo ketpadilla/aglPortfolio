@@ -42,10 +42,33 @@ def graph(functions, selectedOption):
     # ! SHOW GRAPH
     plt.ion()
     plt.show()
-    return
+    # ! EXIT GRAPH
+    input("Press enter to exit graph.")
+    plt.close()
+    plt.ioff()
+    return functions
 
 
-def create_table_of_values():
+def create_table_of_values(functions):
+    # Initialize table
+    ax = plt.subplot()
+    ax.set_axis_off()
+    # Initialize columns and rows
+    columns, rows = ['x', 'y'], [[0,0]]
+    # TODO: revise so that it works for any function
+    # ? Maybe we show the table for each function separately then user must press enter to see the next one
+    for a in range(1,10):
+        rows.append([a, 3*a+2])
+    plt.title("Testing")
+    # Create table for each function
+    # for i in range(len(functions)):
+    #     # Set title
+    #     plt.title(f"Table of Values for y = {pretty(functions[i])}", fontsize=fontSize)
+    #     for a in range(1,10):
+    #         rows.append([a, 3*a+2])
+    plt.table(cellText=rows, colLabels=columns, cellLoc='center', loc='upper left')
+    # Show table
+    plt.show()
     return
 
 
@@ -114,8 +137,10 @@ def main():
     functions = options.get(selectedOption[0], lambda: print("Error: Invalid option."))()
     # Create graph
     fig, ax = plt.subplots()
-    graph(functions, selectedOption)
-    input("Press enter to exit graph.")
+    equations = graph(functions, selectedOption)
+    # Ask user if they want to create a table of values
+    if input("Would you like to create a table of values? (y/n) ").lower() == 'y':
+        create_table_of_values(equations)
     return
 
 
