@@ -8,13 +8,12 @@
 
 # LIBRARIES
 import matplotlib.pyplot as plt
-from sympy import symbols
-from numpy import linspace
-...
+from sympy import symbols, lambdify, pretty
+from numpy import linspace, clip
 
 
 # HELPER FUNCTIONS
-def graph(functions):
+def graph(functions, selectedOption):
     # ! SET INITIAL GRAPH DESIGN
     # Set axis lines to dashed black
     plt.plot([graphDimensions['xmin'], graphDimensions['xmax']], [0, 0], 'k--')
@@ -24,19 +23,24 @@ def graph(functions):
     plt.yticks(range(graphDimensions['ymin'], graphDimensions['ymax']+1), fontsize=fontSize-10)
     plt.grid(which='both', ls='--', lw=0.5, color='gray', alpha=0.5)
     # Set title
-    # ! SET COORDINATES
+    plt.title(f"{options[selectedOption[0]].__name__.replace('_',' ').title()}", fontsize=fontSize)
+    # ! SET AND PLOT COORDINATES
     # Initialize an array of x values
-    xValues = linspace(graphDimensions['xmin'], graphDimensions['xmax'], 10)
-    
-    # TODO: SET Y VALUES
-
-    # TODO: CHANGE CODE
-    for key, value in options.items():
-        plt.title(f"{value.__name__.replace('_',' ').title()}", fontsize=fontSize)
-
-    # TODO: PLOT FUNCTION
-
+    xValues = linspace(graphDimensions['xmin'], graphDimensions['xmax'], 10*(graphDimensions['xmax'] - graphDimensions['xmin'])) 
+    # Calculate coordinates and plot each function
+    x = symbols('x')
+    for i in range(len(functions)):
+        # Initialize dictionary of coordinates, for y, convert the function to a lambda function then get the y values for the function
+        coordinates = {'x': xValues, 'y': lambdify(x, functions[i], 'numpy')(xValues)}
+        # Remove any values that are outside the graph dimensions
+        mask = (coordinates['y'] >= graphDimensions['ymin']) & (coordinates['y'] <= graphDimensions['ymax'])
+        coordinates['x'], coordinates['y'] = coordinates['x'][mask], coordinates['y'][mask]
+        # Plot the function  
+        plt.plot(*coordinates.values(), '-', label=f"y = {pretty(functions[i])}")
+    # Show legend
+    plt.legend(loc='upper left', fontsize=fontSize-5)
     # ! SHOW GRAPH
+    plt.ion()
     plt.show()
     return
 
@@ -61,7 +65,7 @@ def graph_linear_functions():
         function = input(f"Enter function: y{i} = ")
         # Get coefficients (m and b)
         coefficients = [coefficient.strip() for coefficient in function.split('x')]
-        m = int(coefficients[0]) if coefficients[0] != '' else 1
+        m = int(coefficients[0]) if coefficients[0] and coefficients[0] != '-' else (-1 if coefficients[0] == '-' else 1)
         b = int(coefficients[1]) if len(coefficients) > 1 and coefficients[1] != '' else 0
         # Create then append the function to the list of functions
         functions.append(m * x + b)
@@ -110,7 +114,8 @@ def main():
     functions = options.get(selectedOption[0], lambda: print("Error: Invalid option."))()
     # Create graph
     fig, ax = plt.subplots()
-    graph(functions)
+    graph(functions, selectedOption)
+    input("Press enter to exit graph.")
     return
 
 
