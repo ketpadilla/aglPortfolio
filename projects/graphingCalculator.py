@@ -12,7 +12,8 @@ from sympy import symbols, lambdify, pretty
 from numpy import linspace, clip
 
 
-# HELPER FUNCTIONS
+# * HELPER FUNCTIONS
+# CREATE GRAPH
 def graph(functions, selectedOption):
     # ! SET INITIAL GRAPH DESIGN
     # Set axis lines to dashed black
@@ -28,55 +29,80 @@ def graph(functions, selectedOption):
     # Initialize an array of x values
     xValues = linspace(graphDimensions['xmin'], graphDimensions['xmax'], 10*(graphDimensions['xmax'] - graphDimensions['xmin'])) 
     # Calculate coordinates and plot each function
-    x = symbols('x')
     for i in range(len(functions)):
-        # Initialize dictionary of coordinates, for y, convert the function to a lambda function then get the y values for the function
-        coordinates = {'x': xValues, 'y': lambdify(x, functions[i], 'numpy')(xValues)}
-        # Remove any values that are outside the graph dimensions
-        mask = (coordinates['y'] >= graphDimensions['ymin']) & (coordinates['y'] <= graphDimensions['ymax'])
-        coordinates['x'], coordinates['y'] = coordinates['x'][mask], coordinates['y'][mask]
+        # Calculate coordinates
+        coordinates = generate_coordinates(functions[i], xValues)
         # Plot the function  
         plt.plot(*coordinates.values(), '-', label=f"y = {pretty(functions[i])}")
     # Show legend
     plt.legend(loc='upper left', fontsize=fontSize-5)
     # ! SHOW GRAPH
-    plt.ion()
-    plt.show()
+    show()
     # ! EXIT GRAPH
     input("Press enter to exit graph.")
-    plt.close()
-    plt.ioff()
+    close()
     return functions
 
 
+# GENERATE COORDINATES
+def generate_coordinates(function, xValues):
+    # Initialize symbol
+    x = symbols('x')
+    # Initialize dictionary of coordinates, for y, convert the function to a lambda function then get the y values for the function
+    coordinates = {'x': xValues, 'y': lambdify(x, function, 'numpy')(xValues)}
+    # Remove any values that are outside the graph dimensions
+    mask = (coordinates['y'] >= graphDimensions['ymin']) & (coordinates['y'] <= graphDimensions['ymax'])
+    coordinates['x'], coordinates['y'] = coordinates['x'][mask], coordinates['y'][mask]
+    return coordinates
+
+
+# CREATE TABLE OF VALUES
 def create_table_of_values(functions):
-    # Initialize table
-    ax = plt.subplot()
-    ax.set_axis_off()
-    # Initialize columns and rows
-    columns, rows = ['x', 'y'], [[0,0]]
-    # TODO: revise so that it works for any function
-    # ? Maybe we show the table for each function separately then user must press enter to see the next one
-    for a in range(1,10):
-        rows.append([a, 3*a+2])
-    plt.title("Testing")
-    # Create table for each function
-    # for i in range(len(functions)):
-    #     # Set title
-    #     plt.title(f"Table of Values for y = {pretty(functions[i])}", fontsize=fontSize)
-    #     for a in range(1,10):
-    #         rows.append([a, 3*a+2])
-    plt.table(cellText=rows, colLabels=columns, cellLoc='center', loc='upper left')
-    # Show table
-    plt.show()
+    # Initialize an array of x values
+    xValues = linspace(graphDimensions['xmin'], graphDimensions['xmax'], 2*graphDimensions['xmax']) 
+    # Calculate coordinates and append to rows
+    for i in range(len(functions)):
+        # Initialize table
+        ax = plt.subplot()
+        ax.set_axis_off()
+        # Initialize columns and rows
+        columns, rows = ['x', 'y'], []
+        # Calculate coordinates
+        coordinates = generate_coordinates(functions[i], xValues)
+        # Append coordinates to rows using list comprehension
+        rows = [[round(coordinates['x'][j],0), round(coordinates['y'][j],0)] for j in range(len(coordinates['x']))]
+        plt.title(f"Table of Values for y = {pretty(functions[i])}", fontsize=fontSize)
+        table = ax.table(cellText=rows, colLabels=columns, cellLoc='center', loc='upper left')
+        # Tighten layout and reduce width
+        plt.tight_layout(rect=(0.2,0, 0.8, 1))
+        # Adjust fontsize for table
+        table.auto_set_font_size(False)
+        table.set_fontsize(fontSize-8)
+        # Show table
+        show()
+        # Prompt user to press enter to continue to next table or exit
+        input("Press enter to continue to next table." if i < len(functions) - 1 else "Press enter to exit table.")
+        close()
     return
 
 
-def shade_area():
-    return
+# SHOW GRAPH
+def show():
+    return plt.ion(), plt.show()
 
 
-# FUNCTIONS
+# CLOSE GRAPH
+def close():
+    return plt.close(), plt.ioff()
+
+
+# SHADE AREA
+def shade_area(equations):
+    return print("Shading area...")
+
+
+# * FUNCTIONS
+# GRAPH LINEAR FUNCTIONS
 def graph_linear_functions():
     x = symbols('x')
     # Get the number of functions to graph
@@ -95,14 +121,16 @@ def graph_linear_functions():
     return functions
 
 
+# SOLVE AND GRAPH SYSTEM OF EQUATIONS
 def solve_and_graph_system_of_equations():
     return print("Solving and graphing system of equations...")
 
-
+# GRAPH TWO EQUATIONS AND PLOT POINT OF INTERSECTION
 def graph_two_equations_and_plot_point_of_intersection():
     return print("Graphing two equations and plotting point of intersection...")
 
 
+# GRAPH A QUADRATIC EQUATION
 def graph_a_quadratic_equation():
     return print("Graphing a quadratic equation...")
 
@@ -139,8 +167,9 @@ def main():
     fig, ax = plt.subplots()
     equations = graph(functions, selectedOption)
     # Ask user if they want to create a table of values
-    if input("Would you like to create a table of values? (y/n) ").lower() == 'y':
-        create_table_of_values(equations)
+    if input("Create a table of values? (y/n) ").lower() == 'y': create_table_of_values(equations)
+    # If provided equations > 1, ask user if they want to shade the area between the two equations
+    if len(equations) > 1 and input("Shade the area between the two equations? (y/n) ").lower() == 'y': shade_area(equations)
     return
 
 
