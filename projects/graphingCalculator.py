@@ -1,13 +1,16 @@
-# TODO:
-# Display the graph and a table of values for any "y=" equation input
-# Solve a system of two equations without graphing
+# Solve a system of two equations without graphing # ! Graphing part left
 # Graph two equations and plot the point of intersection
 # Given a, b and c in a quadratic equation, plot the roots and vertex
+# Shade area function
+
+# TODO: 
+# 1. Adjust helper functions (2)
+# 2. Abstract code from solve_and_graph_system_of_equations() so that it can be reused by graph_two_equations_and_plot_point_of_intersection()
 
 
 # LIBRARIES
 import matplotlib.pyplot as plt
-from sympy import symbols, lambdify, pretty, Eq, nonlinsolve
+from sympy import symbols, lambdify, pretty, Eq, nonlinsolve, solve
 from numpy import linspace
 from re import findall, match, search
 
@@ -15,8 +18,9 @@ from re import findall, match, search
 # * HELPER FUNCTIONS
 # CREATE GRAPH
 # TODO: Plotting points if provided 
-# TODO: Adjust code for Eq (current e.g.: y = x + y = -8)
 def graph(functions, selectedOption):
+    # ! FOR FUNCTIONS IN EQ FORM, SOLVE FOR Y AND CONVERT TO STR
+    functions = [str(solve(eq, symbols('y'))[0]) if isinstance(eq, Eq) else eq for eq in functions]
     # ! SET INITIAL GRAPH DESIGN
     # Set axis lines to dashed black
     plt.plot([graphDimensions['xmin'], graphDimensions['xmax']], [0, 0], 'k--')
@@ -122,6 +126,7 @@ def shade_area(equations):
 
 # * FUNCTIONS
 # GRAPH LINEAR FUNCTIONS
+# TODO: Allow for fractions
 def graph_linear_functions():
     x = symbols('x')
     # Get the number of functions to graph
