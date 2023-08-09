@@ -5,15 +5,17 @@
 # Given a, b and c in a quadratic equation, plot the roots and vertex
 
 
-
 # LIBRARIES
 import matplotlib.pyplot as plt
-from sympy import symbols, lambdify, pretty
-from numpy import linspace, clip
+from sympy import symbols, lambdify, pretty, Eq, nonlinsolve
+from numpy import linspace
+from re import findall, match, search
 
 
 # * HELPER FUNCTIONS
 # CREATE GRAPH
+# TODO: Plotting points if provided 
+# TODO: Adjust code for Eq (current e.g.: y = x + y = -8)
 def graph(functions, selectedOption):
     # ! SET INITIAL GRAPH DESIGN
     # Set axis lines to dashed black
@@ -57,6 +59,7 @@ def generate_coordinates(function, xValues):
 
 
 # CREATE TABLE OF VALUES
+# TODO: Adjust code fo Eq
 def create_table_of_values(functions):
     # Initialize an array of x values
     xValues = linspace(graphDimensions['xmin'], graphDimensions['xmax'], 2*graphDimensions['xmax']) 
@@ -86,6 +89,21 @@ def create_table_of_values(functions):
     return
 
 
+# CONVERT STRING TO EQ
+def convert_str_to_eq(function):
+    sides = [findall(r'[-+]?\s*\d*\s*[xy]|[-+]?\s*\d+', side) for side in function.split('=')]
+    parts = []
+    for side in sides:
+        components = [match(r'([-+]?\s*\d*)', component).group(1) for component in side]
+        variables = [search(r'([xy])', component).group(1) if search(r'([xy])', component) else '' for component in side]
+        side = [(coefficient + '*' + variable if coefficient not in ['', '+', '-'] and variable else coefficient + variable) for coefficient, variable in zip(components, variables)]
+        # Append the side to the list of sides
+        parts.append(side)
+    x, y = symbols('x y')
+    equation = Eq(eval(''.join(parts[0])), eval(''.join(parts[1])))
+    return equation
+
+
 # SHOW GRAPH
 def show():
     return plt.ion(), plt.show()
@@ -98,6 +116,7 @@ def close():
 
 # SHADE AREA
 def shade_area(equations):
+    # TODO
     return print("Shading area...")
 
 
@@ -118,12 +137,28 @@ def graph_linear_functions():
         b = int(coefficients[1]) if len(coefficients) > 1 and coefficients[1] != '' else 0
         # ! Create then append the function to the list of functions
         functions.append(m * x + b)
-    return functions
+    return functions, True
 
 
 # SOLVE AND GRAPH SYSTEM OF EQUATIONS
 def solve_and_graph_system_of_equations():
-    return print("Solving and graphing system of equations...")
+    # Get the functions to graph
+    functions = []
+    for i in range(1, 3):
+        # Get string input for the function
+        function = input(f"Enter function (e.g., x + y = 2): ")
+        # ! Convert string to a sympy equation
+        equation = convert_str_to_eq(function)
+        # ! Append the equation to the list of equations
+        functions.append(equation)
+    # Solve the system of equations
+    intersection = nonlinsolve(functions, symbols('x y'))
+    # Print the solution
+    print(f"The answer is x = {intersection.args[0][0]} and y = {intersection.args[0][1]}")
+    # Ask user if they want to see the graph of the system of equations
+    figure = True if input("Would you like to see the graph of the system of equations? (y/n) ").lower() == 'y' else False
+    return functions, figure
+
 
 # GRAPH TWO EQUATIONS AND PLOT POINT OF INTERSECTION
 def graph_two_equations_and_plot_point_of_intersection():
@@ -162,14 +197,15 @@ def main():
     # Menu selection
     selectedOption = menu()
     # Call the function based on the user's choice
-    functions = options.get(selectedOption[0], lambda: print("Error: Invalid option."))()
+    functions, figure = options.get(selectedOption[0], lambda: print("Error: Invalid option."))()
+    if figure == False: return
     # ! Create graph
     fig, ax = plt.subplots()
     equations = graph(functions, selectedOption)
     # Ask user if they want to create a table of values
     if input("Create a table of values? (y/n) ").lower() == 'y': create_table_of_values(equations)
     # If provided equations > 1, ask user if they want to shade the area between the two equations
-    if len(equations) > 1 and input("Shade the area between the two equations? (y/n) ").lower() == 'y': shade_area(equations)
+    if len(equations) > 1 and input("Shade the area between the two equations? (y/n) ").lower() == 'y': shade_area(equations) # TODO
     return
 
 
