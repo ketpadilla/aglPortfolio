@@ -112,6 +112,23 @@ def convert_str_to_eq(function):
     return equation
 
 
+# SOLVE SYSTEM
+def solve_system():
+    # Initialize list of functions
+    functions = []
+    # Get the functions to graph
+    for i in range(1, 3):
+        # Get string input for the function
+        function = input(f"Enter equation (e.g., x + y = 2): ")
+        # ! Convert string to a sympy equation
+        equation = convert_str_to_eq(function)
+        # ! Append the equation to the list of equations
+        functions.append(equation)
+    # Solve the system of equations
+    intersection = nonlinsolve(functions, symbols('x y'))
+    return functions, intersection
+
+
 # SHOW GRAPH
 def show():
     return plt.ion(), plt.show()
@@ -148,21 +165,6 @@ def graph_linear_functions():
         functions.append(m * x + b)
     return functions, [], True
 
-# SOLVE SYSTEM
-def solve_system():
-    # Initialize list of functions
-    functions = []
-    # Get the functions to graph
-    for i in range(1, 3):
-        # Get string input for the function
-        function = input(f"Enter equation (e.g., x + y = 2): ")
-        # ! Convert string to a sympy equation
-        equation = convert_str_to_eq(function)
-        # ! Append the equation to the list of equations
-        functions.append(equation)
-    # Solve the system of equations
-    intersection = nonlinsolve(functions, symbols('x y'))
-    return functions, intersection
 
 # SOLVE AND GRAPH SYSTEM OF EQUATIONS
 def solve_and_or_graph_system_of_equations():
