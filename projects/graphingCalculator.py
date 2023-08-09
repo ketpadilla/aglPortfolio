@@ -1,4 +1,4 @@
-# Solve a system of two equations without graphing # ! Graphing part left
+# Solve a system of two equations without graphing # ! fractions part left
 # Graph two equations and plot the point of intersection
 # Given a, b and c in a quadratic equation, plot the roots and vertex
 # Shade area function
@@ -17,7 +17,6 @@ from re import findall, match, search
 
 # * HELPER FUNCTIONS
 # CREATE GRAPH
-# TODO: Plotting points if provided 
 def graph(functions, points, selectedOption):
     # ! FOR FUNCTIONS IN EQ FORM, SOLVE FOR Y AND CONVERT TO STR
     functions = [str(solve(eq, symbols('y'))[0]) if isinstance(eq, Eq) else eq for eq in functions]
@@ -69,7 +68,6 @@ def generate_coordinates(function, xValues):
 
 
 # CREATE TABLE OF VALUES
-# TODO: Adjust code fo Eq
 def create_table_of_values(functions):
     # Initialize an array of x values
     xValues = linspace(graphDimensions['xmin'], graphDimensions['xmax'], 2*graphDimensions['xmax']) 
@@ -150,20 +148,26 @@ def graph_linear_functions():
         functions.append(m * x + b)
     return functions, [], True
 
-
-# SOLVE AND GRAPH SYSTEM OF EQUATIONS
-def solve_and_graph_system_of_equations():
-    # Get the functions to graph
+# SOLVE SYSTEM
+def solve_system():
+    # Initialize list of functions
     functions = []
+    # Get the functions to graph
     for i in range(1, 3):
         # Get string input for the function
-        function = input(f"Enter function (e.g., x + y = 2): ")
+        function = input(f"Enter equation (e.g., x + y = 2): ")
         # ! Convert string to a sympy equation
         equation = convert_str_to_eq(function)
         # ! Append the equation to the list of equations
         functions.append(equation)
     # Solve the system of equations
     intersection = nonlinsolve(functions, symbols('x y'))
+    return functions, intersection
+
+# SOLVE AND GRAPH SYSTEM OF EQUATIONS
+def solve_and_or_graph_system_of_equations():
+    # Get functions and intersection
+    functions, intersection = solve_system()
     # Print the solution
     print(f"The answer is x = {intersection.args[0][0]} and y = {intersection.args[0][1]}")
     # Ask user if they want to see the graph of the system of equations
@@ -173,16 +177,21 @@ def solve_and_graph_system_of_equations():
 
 # GRAPH TWO EQUATIONS AND PLOT POINT OF INTERSECTION
 def graph_two_equations_and_plot_point_of_intersection():
-    return print("Graphing two equations and plotting point of intersection...")
+    # Get functions and intersection
+    functions, intersection = solve_system()
+    # Print intersection
+    print(f"The intersection is ({intersection.args[0][0]}, {intersection.args[0][1]})")
+    return functions, [intersection.args[0][0], intersection.args[0][1]], True
 
 
 # GRAPH A QUADRATIC EQUATION
 def graph_a_quadratic_equation():
+    # TODO
     return print("Graphing a quadratic equation...")
 
 
 # INITIALIZE VARIABLES
-options = {'a': graph_linear_functions, 'b': solve_and_graph_system_of_equations, 'c': graph_two_equations_and_plot_point_of_intersection, 'd': graph_a_quadratic_equation}
+options = {'a': graph_linear_functions, 'b': solve_and_or_graph_system_of_equations, 'c': graph_two_equations_and_plot_point_of_intersection, 'd': graph_a_quadratic_equation}
 graphDimensions = {'xmin': -15, 'ymin': -15, 'xmax': 15, 'ymax': 15}
 fontSize = max(9, (graphDimensions['xmax'] - graphDimensions['xmin']) / 2)
 
