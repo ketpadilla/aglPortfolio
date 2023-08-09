@@ -18,7 +18,7 @@ from re import findall, match, search
 # * HELPER FUNCTIONS
 # CREATE GRAPH
 # TODO: Plotting points if provided 
-def graph(functions, selectedOption):
+def graph(functions, points, selectedOption):
     # ! FOR FUNCTIONS IN EQ FORM, SOLVE FOR Y AND CONVERT TO STR
     functions = [str(solve(eq, symbols('y'))[0]) if isinstance(eq, Eq) else eq for eq in functions]
     # ! SET INITIAL GRAPH DESIGN
@@ -40,6 +40,12 @@ def graph(functions, selectedOption):
         coordinates = generate_coordinates(functions[i], xValues)
         # Plot the function  
         plt.plot(*coordinates.values(), '-', label=f"y = {pretty(functions[i])}")
+    # ! PLOT POINTS
+    # Check if points were provided
+    if points:
+        for i in range(len(points)-1):
+            # Plot the points
+            plt.plot(points[i], points[i+1], 'o', label=f'({points[i]}, {points[i+1]})')
     # Show legend
     plt.legend(loc='upper left', fontsize=fontSize-5)
     # ! SHOW GRAPH
@@ -142,7 +148,7 @@ def graph_linear_functions():
         b = int(coefficients[1]) if len(coefficients) > 1 and coefficients[1] != '' else 0
         # ! Create then append the function to the list of functions
         functions.append(m * x + b)
-    return functions, True
+    return functions, [], True
 
 
 # SOLVE AND GRAPH SYSTEM OF EQUATIONS
@@ -162,7 +168,7 @@ def solve_and_graph_system_of_equations():
     print(f"The answer is x = {intersection.args[0][0]} and y = {intersection.args[0][1]}")
     # Ask user if they want to see the graph of the system of equations
     figure = True if input("Would you like to see the graph of the system of equations? (y/n) ").lower() == 'y' else False
-    return functions, figure
+    return functions, [intersection.args[0][0], intersection.args[0][1]], figure
 
 
 # GRAPH TWO EQUATIONS AND PLOT POINT OF INTERSECTION
@@ -202,11 +208,11 @@ def main():
     # Menu selection
     selectedOption = menu()
     # Call the function based on the user's choice
-    functions, figure = options.get(selectedOption[0], lambda: print("Error: Invalid option."))()
+    functions, points, figure = options.get(selectedOption[0], lambda: print("Error: Invalid option."))()
     if figure == False: return
     # ! Create graph
     fig, ax = plt.subplots()
-    equations = graph(functions, selectedOption)
+    equations = graph(functions, points, selectedOption)
     # Ask user if they want to create a table of values
     if input("Create a table of values? (y/n) ").lower() == 'y': create_table_of_values(equations)
     # If provided equations > 1, ask user if they want to shade the area between the two equations
