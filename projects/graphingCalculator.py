@@ -48,9 +48,9 @@ def graph(functions, selectedOption):
 def generate_coordinates(function, xValues):
     # Initialize symbol
     x = symbols('x')
-    # Initialize dictionary of coordinates, for y, convert the function to a lambda function then get the y values for the function
+    # ! Initialize dictionary of coordinates, for y, convert the function to a lambda function then get the y values for the function
     coordinates = {'x': xValues, 'y': lambdify(x, function, 'numpy')(xValues)}
-    # Remove any values that are outside the graph dimensions
+    # ! Remove any values that are outside the graph dimensions
     mask = (coordinates['y'] >= graphDimensions['ymin']) & (coordinates['y'] <= graphDimensions['ymax'])
     coordinates['x'], coordinates['y'] = coordinates['x'][mask], coordinates['y'][mask]
     return coordinates
@@ -69,7 +69,7 @@ def create_table_of_values(functions):
         columns, rows = ['x', 'y'], []
         # Calculate coordinates
         coordinates = generate_coordinates(functions[i], xValues)
-        # Append coordinates to rows using list comprehension
+        # ! Append coordinates to rows using list comprehension
         rows = [[round(coordinates['x'][j],0), round(coordinates['y'][j],0)] for j in range(len(coordinates['x']))]
         plt.title(f"Table of Values for y = {pretty(functions[i])}", fontsize=fontSize)
         table = ax.table(cellText=rows, colLabels=columns, cellLoc='center', loc='upper left')
@@ -112,11 +112,11 @@ def graph_linear_functions():
     for i in range(1, numberOfFunctions + 1):
         # Get string input for the function
         function = input(f"Enter function: y{i} = ")
-        # Get coefficients (m and b)
+        # ! Get coefficients (m and b)
         coefficients = [coefficient.strip() for coefficient in function.split('x')]
         m = int(coefficients[0]) if coefficients[0] and coefficients[0] != '-' else (-1 if coefficients[0] == '-' else 1)
         b = int(coefficients[1]) if len(coefficients) > 1 and coefficients[1] != '' else 0
-        # Create then append the function to the list of functions
+        # ! Create then append the function to the list of functions
         functions.append(m * x + b)
     return functions
 
@@ -163,7 +163,7 @@ def main():
     selectedOption = menu()
     # Call the function based on the user's choice
     functions = options.get(selectedOption[0], lambda: print("Error: Invalid option."))()
-    # Create graph
+    # ! Create graph
     fig, ax = plt.subplots()
     equations = graph(functions, selectedOption)
     # Ask user if they want to create a table of values
