@@ -1,11 +1,7 @@
-# Solve a system of two equations without graphing # ! fractions part left
-# Graph two equations and plot the point of intersection
+# TODO
 # Given a, b and c in a quadratic equation, plot the roots and vertex
 # Shade area function
-
-# TODO: 
-# 1. Adjust helper functions (2)
-# 2. Abstract code from solve_and_graph_system_of_equations() so that it can be reused by graph_two_equations_and_plot_point_of_intersection()
+# ! REVISE solve_system() and graph_linear_functions() to allow for fractions (do not allow user to use parentheses)
 
 
 # LIBRARIES
@@ -147,7 +143,6 @@ def shade_area(equations):
 
 # * FUNCTIONS
 # GRAPH LINEAR FUNCTIONS
-# TODO: Allow for fractions
 def graph_linear_functions():
     x = symbols('x')
     # Get the number of functions to graph
