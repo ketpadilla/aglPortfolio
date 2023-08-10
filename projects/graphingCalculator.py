@@ -1,13 +1,12 @@
 # TODO
-# Given a, b and c in a quadratic equation, plot the roots and vertex
 # Shade area function
 # ! REVISE solve_system() and graph_linear_functions() to allow for fractions (do not allow user to use parentheses)
 
 
 # LIBRARIES
 import matplotlib.pyplot as plt
-from sympy import symbols, lambdify, pretty, Eq, nonlinsolve, solve
-from numpy import linspace
+from sympy import symbols, lambdify, Eq, nonlinsolve, solve
+from numpy import linspace, sqrt, array
 from re import findall, match, search
 
 
@@ -34,13 +33,10 @@ def graph(functions, points, selectedOption):
         # Calculate coordinates
         coordinates = generate_coordinates(functions[i], xValues)
         # Plot the function  
-        plt.plot(*coordinates.values(), '-', label=f"y = {pretty(functions[i])}")
+        plt.plot(*coordinates.values(), '-', label=f"y = {functions[i]}")
     # ! PLOT POINTS
-    # Check if points were provided
-    if points:
-        for i in range(len(points)-1):
-            # Plot the points
-            plt.plot(points[i], points[i+1], 'o', label=f'({points[i]}, {points[i+1]})')
+    # Plot provided points
+    [plt.plot(x, y, 'o', label=f'({x}, {y})') for x, y in points]
     # Show legend
     plt.legend(loc='upper left', fontsize=fontSize-5)
     # ! SHOW GRAPH
@@ -66,7 +62,7 @@ def generate_coordinates(function, xValues):
 # CREATE TABLE OF VALUES
 def create_table_of_values(functions):
     # Initialize an array of x values
-    xValues = linspace(graphDimensions['xmin'], graphDimensions['xmax'], 2*graphDimensions['xmax']) 
+    xValues = array(range(graphDimensions['xmin'], graphDimensions['xmax']+1))
     # Calculate coordinates and append to rows
     for i in range(len(functions)):
         # Initialize table
@@ -78,7 +74,7 @@ def create_table_of_values(functions):
         coordinates = generate_coordinates(functions[i], xValues)
         # ! Append coordinates to rows using list comprehension
         rows = [[round(coordinates['x'][j],0), round(coordinates['y'][j],0)] for j in range(len(coordinates['x']))]
-        plt.title(f"Table of Values for y = {pretty(functions[i])}", fontsize=fontSize)
+        plt.title(f"Table of Values for y = {functions[i]}", fontsize=fontSize)
         table = ax.table(cellText=rows, colLabels=columns, cellLoc='center', loc='upper left')
         # Tighten layout and reduce width
         plt.tight_layout(rect=(0.2,0, 0.8, 1))
@@ -169,7 +165,7 @@ def solve_and_or_graph_system_of_equations():
     print(f"The answer is x = {intersection.args[0][0]} and y = {intersection.args[0][1]}")
     # Ask user if they want to see the graph of the system of equations
     figure = True if input("Would you like to see the graph of the system of equations? (y/n) ").lower() == 'y' else False
-    return functions, [intersection.args[0][0], intersection.args[0][1]], figure
+    return functions, [[intersection.args[0][0], intersection.args[0][1]]], figure
 
 
 # GRAPH TWO EQUATIONS AND PLOT POINT OF INTERSECTION
@@ -178,13 +174,51 @@ def graph_two_equations_and_plot_point_of_intersection():
     functions, intersection = solve_system()
     # Print intersection
     print(f"The intersection is ({intersection.args[0][0]}, {intersection.args[0][1]})")
-    return functions, [intersection.args[0][0], intersection.args[0][1]], True
+    return functions, [[intersection.args[0][0], intersection.args[0][1]]], True
 
 
 # GRAPH A QUADRATIC EQUATION
 def graph_a_quadratic_equation():
-    # TODO
-    return print("Graphing a quadratic equation...")
+    # Initialize dictionary of values
+    values = {'a': 0, 'b': 0, 'c': 0}
+    # Ask for a, b, and c values (ax^2 + bx + c)
+    print("Enter the values for ax^2 + bx + c")
+    for key in values.keys():
+        values[key] = int(input(f"Enter the value for {key}: "))
+    # Create Eq function
+    x = symbols('x')
+    function = [values['a'] * x ** 2 + values['b'] * x + values['c']]
+    # Print the equation
+    print(f"The equation is y = {function[0]}")
+    # Calculate the vertex
+    vertex = [-values['b'] / (2 * values['a']), (4 * values['a'] * values['c'] - values['b'] ** 2) / (4 * values['a'])]
+    # Print the vertex
+    print(f"The vertex is ({vertex[0]}, {vertex[1]})")
+    # Calculate disciminant
+    discriminant = values['b'] ** 2 - 4 * values['a'] * values['c']
+    # Calculate roots
+    if discriminant > 0:
+        root1 = [(-values['b'] + sqrt(discriminant)) / (2 * values['a']),0.0]
+        root2 = [(-values['b'] - sqrt(discriminant)) / (2 * values['a']),0.0]
+        # Print the roots
+        print(f"The roots are ({root1[0]}, {root1[1]}) and ({root2[0]}, {root2[1]})")
+        # Check if the vertex is a root
+        if vertex[0] == root1[0]:
+            return function, [vertex, root2], True
+        elif vertex[0] == root2[0]:
+            return function, [vertex, root1], True
+        return function, [vertex, root1, root2], True
+    elif discriminant == 0:
+        root = [-values['b'] / (2 * values['a']),0.0]
+        # Print the root
+        print(f"The root is ({root[0]}, {root[1]})")
+        # Check if the vertex is a root
+        if vertex[0] == root[0]:
+            return function, [vertex], True
+        return function, [vertex, root], True
+    # Print the root
+    print("There are no real roots")
+    return function, [vertex], True
 
 
 # INITIALIZE VARIABLES
