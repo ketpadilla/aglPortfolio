@@ -1,6 +1,6 @@
 # TODO
 # Shade area function
-# ! REVISE solve_system() and graph_linear_functions() to allow for fractions (do not allow user to use parentheses)
+# ! REVISE solve_system() and graph_linear_functions() and graph_a_quadratic equation to allow for fractions (do not allow user to use parentheses)
 
 
 # LIBRARIES
@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 from sympy import symbols, lambdify, Eq, nonlinsolve, solve
 from numpy import linspace, sqrt, array
 from re import findall, match, search
+from sys import exit
 
 
 # * HELPER FUNCTIONS
@@ -118,6 +119,10 @@ def solve_system():
         functions.append(equation)
     # Solve the system of equations
     intersection = nonlinsolve(functions, symbols('x y'))
+    # End program if there is no solution
+    if not intersection:
+        print("No solution.")
+        exit()
     return functions, intersection
 
 
