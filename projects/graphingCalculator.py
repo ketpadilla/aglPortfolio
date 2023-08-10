@@ -1,14 +1,14 @@
 # TODO
-# Shade area function
 # ! REVISE solve_system() and graph_linear_functions() and graph_a_quadratic equation to allow for fractions (do not allow user to use parentheses)
 
 
 # LIBRARIES
 import matplotlib.pyplot as plt
 from sympy import symbols, lambdify, Eq, nonlinsolve, solve
-from numpy import linspace, sqrt, array
+from numpy import linspace, sqrt, array, max as npmax, min as npmin
 from re import findall, match, search
 from sys import exit
+from inspect import stack
 
 
 # * HELPER FUNCTIONS
@@ -40,6 +40,8 @@ def graph(functions, points, selectedOption):
     [plt.plot(x, y, 'o', label=f'({x}, {y})') for x, y in points]
     # Show legend
     plt.legend(loc='upper left', fontsize=fontSize-5)
+    # Check if function was called from shade_area(): if so, do not show graph immediately
+    if stack()[1].function == 'shade_area': return functions
     # ! SHOW GRAPH
     show()
     # ! EXIT GRAPH
@@ -54,6 +56,8 @@ def generate_coordinates(function, xValues):
     x = symbols('x')
     # ! Initialize dictionary of coordinates, for y, convert the function to a lambda function then get the y values for the function
     coordinates = {'x': xValues, 'y': lambdify(x, function, 'numpy')(xValues)}
+    # Check if function was called from shade_area(): if so, do not show graph immediately
+    if stack()[1].function == 'shade_area': return coordinates
     # ! Remove any values that are outside the graph dimensions
     mask = (coordinates['y'] >= graphDimensions['ymin']) & (coordinates['y'] <= graphDimensions['ymax'])
     coordinates['x'], coordinates['y'] = coordinates['x'][mask], coordinates['y'][mask]
@@ -137,9 +141,54 @@ def close():
 
 
 # SHADE AREA
-def shade_area(equations):
-    # TODO
-    return print("Shading area...")
+def shade_area(equations, points, selectedOption):
+    # ! ASK USER FOR THE AREA TO SHADE
+    # For more than 2 functions
+    if len(equations) > 2: 
+        return print("Program currently cannot shade areas for more than 2 functions.")
+    # For linear and quadratic functions
+    if len(equations) == 1:
+        area = graphDimensions['ymax'] if input(f"Would you like to the shade above or below the line y = {equations[0]}? (a/b) ").lower() == 'a' else graphDimensions['ymin']
+    # For systems of equations
+    elif len(equations) == 2:
+        area = input(f"Would you like to shade the area left (l), right (r), above (a), or below (b) the intersection of y = {equations[0]} and y = {equations[1]}? ").lower()
+        print(area)
+    # ! CREATE GRAPH
+    equations = graph(equations, points, selectedOption)
+    # ! FILL AREA
+    # Initialize x values
+    xValues = linspace(graphDimensions['xmin'], graphDimensions['xmax'], 10*(graphDimensions['xmax'] - graphDimensions['xmin'])) 
+    # For linear and quadratic functions
+    if len(equations) == 1:
+        # Generate coordinates
+        coordinates = generate_coordinates(equations[0], xValues)
+        # Fill area
+        plt.fill_between(*coordinates.values(), area)
+    # For systems of equations
+    else:
+        # Generate coordinates
+        coordinates1 = array(list(generate_coordinates(equations[0], xValues).values()))
+        coordinates2 = array(list(generate_coordinates(equations[1], xValues).values()))
+        # Set coordinates1 to the function with the higher coordinates on the left side
+        if coordinates1[1][0] < coordinates2[1][0]:
+            coordinates1, coordinates2 = coordinates2, coordinates1
+        # Determine which side to shade then shade
+        if area == 'l': # left
+            plt.fill_between(xValues, coordinates1[1], coordinates2[1], where=coordinates1[1] > coordinates2[1])
+        elif area == 'r': # right
+            plt.fill_between(xValues, coordinates1[1], coordinates2[1], where=coordinates1[1] < coordinates2[1])
+        elif area == 'a': # above
+            areaAbove = npmax([coordinates1[1], coordinates2[1]], axis=0)
+            plt.fill_between(xValues, areaAbove, areaAbove.max())
+        elif area == 'b': # below
+            areaBelow = npmin([coordinates1[1], coordinates2[1]], axis=0)
+            plt.fill_between(xValues, areaBelow, areaBelow.min())
+    # ! SHOW GRAPH
+    show()
+    # ! EXIT GRAPH
+    input("Press enter to exit graph.")
+    close()
+    return
 
 
 # * FUNCTIONS
@@ -255,7 +304,7 @@ def main():
     # Ask user if they want to create a table of values
     if input("Create a table of values? (y/n) ").lower() == 'y': create_table_of_values(equations)
     # If provided equations > 1, ask user if they want to shade the area between the two equations
-    if len(equations) > 1 and input("Shade the area between the two equations? (y/n) ").lower() == 'y': shade_area(equations) # TODO
+    if input("Shade an area of the graph? (y/n) ").lower() == 'y': shade_area(equations, points, selectedOption)
     return
 
 
