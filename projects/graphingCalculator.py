@@ -183,8 +183,7 @@ def graph_a_quadratic_equation():
     values = {'a': 0, 'b': 0, 'c': 0}
     # Ask for a, b, and c values (ax^2 + bx + c)
     print("Enter the values for ax^2 + bx + c")
-    for key in values.keys():
-        values[key] = int(input(f"Enter the value for {key}: "))
+    values = {key: int(input(f"Enter the value for {key}: ")) for key in values.keys()}
     # Create Eq function
     x = symbols('x')
     function = [values['a'] * x ** 2 + values['b'] * x + values['c']]
@@ -198,11 +197,8 @@ def graph_a_quadratic_equation():
     discriminant = values['b'] ** 2 - 4 * values['a'] * values['c']
     # Calculate roots
     if discriminant > 0:
-        root1 = [(-values['b'] + sqrt(discriminant)) / (2 * values['a']),0.0]
-        root2 = [(-values['b'] - sqrt(discriminant)) / (2 * values['a']),0.0]
-        # Print the roots
-        print(f"The roots are ({root1[0]}, {root1[1]}) and ({root2[0]}, {root2[1]})")
-        # Check if the vertex is a root
+        root1, root2 = [(-values['b'] + sqrt(discriminant)) / (2 * values['a']),0.0], [(-values['b'] - sqrt(discriminant)) / (2 * values['a']),0.0]
+        # Check if the vertex is a root before returning
         if vertex[0] == root1[0]:
             return function, [vertex, root2], True
         elif vertex[0] == root2[0]:
@@ -212,11 +208,9 @@ def graph_a_quadratic_equation():
         root = [-values['b'] / (2 * values['a']),0.0]
         # Print the root
         print(f"The root is ({root[0]}, {root[1]})")
-        # Check if the vertex is a root
-        if vertex[0] == root[0]:
-            return function, [vertex], True
-        return function, [vertex, root], True
-    # Print the root
+        # Check if the vertex is a root before returning
+        return (function, [vertex], True) if vertex[0] == root[0] else (function, [vertex, root], True)
+    # Return values
     print("There are no real roots")
     return function, [vertex], True
 
