@@ -1,11 +1,7 @@
-# TODO
-# ! REVISE solve_system() and graph_linear_functions() and graph_a_quadratic equation to allow for fractions (do not allow user to use parentheses)
-
-
 # LIBRARIES
 import matplotlib.pyplot as plt
 from sympy import symbols, lambdify, Eq, nonlinsolve, solve
-from numpy import linspace, sqrt, array, max as npmax, min as npmin
+from numpy import linspace, sqrt, array, max as npmax, min as npmin, maximum as npmaximum, minimum as npminimum
 from re import findall, match, search
 from sys import exit
 from inspect import stack
@@ -82,7 +78,7 @@ def create_table_of_values(functions):
         plt.title(f"Table of Values for y = {functions[i]}", fontsize=fontSize)
         table = ax.table(cellText=rows, colLabels=columns, cellLoc='center', loc='upper left')
         # Tighten layout and reduce width
-        plt.tight_layout(rect=(0.2,0, 0.8, 1))
+        plt.tight_layout(rect=(0.2,0, 0.5, 1))
         # Adjust fontsize for table
         table.auto_set_font_size(False)
         table.set_fontsize(fontSize-8)
@@ -152,7 +148,6 @@ def shade_area(equations, points, selectedOption):
     # For systems of equations
     elif len(equations) == 2:
         area = input(f"Would you like to shade the area left (l), right (r), above (a), or below (b) the intersection of y = {equations[0]} and y = {equations[1]}? ").lower()
-        print(area)
     # ! CREATE GRAPH
     equations = graph(equations, points, selectedOption)
     # ! FILL AREA
@@ -162,27 +157,41 @@ def shade_area(equations, points, selectedOption):
     if len(equations) == 1:
         # Generate coordinates
         coordinates = generate_coordinates(equations[0], xValues)
-        # Fill area
-        plt.fill_between(*coordinates.values(), area)
+        # Determine the area limits based on user input ('a' for above, 'b' for below)
+        if area == graphDimensions['ymax']:
+            shade_area = npminimum(npmaximum(coordinates['y'], graphDimensions['ymax']), graphDimensions['ymax'])
+        elif area == graphDimensions['ymin']:
+            shade_area = npmaximum(npminimum(coordinates['y'], graphDimensions['ymin']), graphDimensions['ymin'])
+        # Adjust y-coordinates that exceed the graph dimensions
+        coordinates['y'] = npmaximum(npminimum(coordinates['y'], graphDimensions['ymax']), graphDimensions['ymin'])
+        # Fill the specified area
+        plt.fill_between(coordinates['x'], shade_area, coordinates['y'], alpha=0.5)
     # For systems of equations
     else:
         # Generate coordinates
-        coordinates1 = array(list(generate_coordinates(equations[0], xValues).values()))
-        coordinates2 = array(list(generate_coordinates(equations[1], xValues).values()))
+        coordinates1 = generate_coordinates(equations[0], xValues)
+        coordinates2 = generate_coordinates(equations[1], xValues)
+        # Convert coordinates to arrays
+        coordinates1 = array(list(coordinates1.values()))
+        coordinates2 = array(list(coordinates2.values()))
         # Set coordinates1 to the function with the higher coordinates on the left side
         if coordinates1[1][0] < coordinates2[1][0]:
             coordinates1, coordinates2 = coordinates2, coordinates1
         # Determine which side to shade then shade
         if area == 'l': # left
-            plt.fill_between(xValues, coordinates1[1], coordinates2[1], where=coordinates1[1] > coordinates2[1])
+            shade_start = max(graphDimensions['ymin'], npmin(coordinates1[1]))
+            shade_end = min(graphDimensions['ymax'], npmax(coordinates1[1]))
+            plt.fill_between(xValues, npmaximum(npminimum(coordinates1[1], coordinates2[1]), shade_start), npminimum(shade_end, npmaximum(coordinates1[1], coordinates2[1])), where=(coordinates1[1] > coordinates2[1]) & (xValues >= npmin(coordinates1[0])) & (xValues <= npmax(coordinates2[0])), alpha=0.5)
         elif area == 'r': # right
-            plt.fill_between(xValues, coordinates1[1], coordinates2[1], where=coordinates1[1] < coordinates2[1])
+            shade_start = max(graphDimensions['ymin'], npmin(coordinates1[1]))
+            shade_end = min(graphDimensions['ymax'], npmax(coordinates2[1]))
+            plt.fill_between(xValues, npmaximum(npminimum(coordinates1[1], coordinates2[1]), shade_start), npminimum(shade_end, npmaximum(coordinates1[1], coordinates2[1])), where=(coordinates1[1] < coordinates2[1]) & (xValues >= npmin(coordinates1[0])) & (xValues <= npmax(coordinates2[0])), alpha=0.5)
         elif area == 'a': # above
-            areaAbove = npmax([coordinates1[1], coordinates2[1]], axis=0)
-            plt.fill_between(xValues, areaAbove, areaAbove.max())
+            shade_area = npmaximum(coordinates1[1], coordinates2[1])
+            plt.fill_between(xValues, npminimum(shade_area, graphDimensions['ymax']), graphDimensions['ymax'], alpha=0.5)
         elif area == 'b': # below
-            areaBelow = npmin([coordinates1[1], coordinates2[1]], axis=0)
-            plt.fill_between(xValues, areaBelow, areaBelow.min())
+            shade_area = npminimum(coordinates1[1], coordinates2[1])
+            plt.fill_between(xValues, graphDimensions['ymin'], npmaximum(shade_area, graphDimensions['ymin']), alpha=0.5)
     # ! SHOW GRAPH
     show()
     # ! EXIT GRAPH
@@ -295,7 +304,10 @@ def menu():
 def main():
     # Menu selection
     selectedOption = menu()
+    # Prompt user unsupported inputs
+    print("\nFractions and decimals are not supported. Please enter integers only.")
     # Call the function based on the user's choice
+    
     functions, points, figure = options.get(selectedOption[0], lambda: print("Error: Invalid option."))()
     if figure == False: return
     # ! Create graph
