@@ -159,7 +159,7 @@ def graph_linear_functions():
 
 # SOLVE AND GRAPH SYSTEM OF EQUATIONS
 def solve_and_or_graph_system_of_equations():
-    # Get functions and intersection
+    # ! Get functions and intersection
     functions, intersection = solve_system()
     # Print the solution
     print(f"The answer is x = {intersection.args[0][0]} and y = {intersection.args[0][1]}")
@@ -170,7 +170,7 @@ def solve_and_or_graph_system_of_equations():
 
 # GRAPH TWO EQUATIONS AND PLOT POINT OF INTERSECTION
 def graph_two_equations_and_plot_point_of_intersection():
-    # Get functions and intersection
+    # ! Get functions and intersection
     functions, intersection = solve_system()
     # Print intersection
     print(f"The intersection is ({intersection.args[0][0]}, {intersection.args[0][1]})")
@@ -181,7 +181,7 @@ def graph_two_equations_and_plot_point_of_intersection():
 def graph_a_quadratic_equation():
     # Initialize dictionary of values
     values = {'a': 0, 'b': 0, 'c': 0}
-    # Ask for a, b, and c values (ax^2 + bx + c)
+    # ! Ask for a, b, and c values (ax^2 + bx + c)
     print("Enter the values for ax^2 + bx + c")
     values = {key: int(input(f"Enter the value for {key}: ")) for key in values.keys()}
     # Create Eq function
@@ -189,13 +189,13 @@ def graph_a_quadratic_equation():
     function = [values['a'] * x ** 2 + values['b'] * x + values['c']]
     # Print the equation
     print(f"The equation is y = {function[0]}")
-    # Calculate the vertex
+    # ! Calculate the vertex
     vertex = [-values['b'] / (2 * values['a']), (4 * values['a'] * values['c'] - values['b'] ** 2) / (4 * values['a'])]
     # Print the vertex
     print(f"The vertex is ({vertex[0]}, {vertex[1]})")
     # Calculate disciminant
     discriminant = values['b'] ** 2 - 4 * values['a'] * values['c']
-    # Calculate roots
+    # ! Calculate roots
     if discriminant > 0:
         root1, root2 = [(-values['b'] + sqrt(discriminant)) / (2 * values['a']),0.0], [(-values['b'] - sqrt(discriminant)) / (2 * values['a']),0.0]
         # Check if the vertex is a root before returning
