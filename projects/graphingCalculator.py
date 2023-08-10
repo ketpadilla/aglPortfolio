@@ -157,15 +157,15 @@ def shade_area(equations, points, selectedOption):
     if len(equations) == 1:
         # Generate coordinates
         coordinates = generate_coordinates(equations[0], xValues)
-        # Determine the area limits based on user input ('a' for above, 'b' for below)
+        # ! DETERMINE AREA TO SHADE AND ENFORCE GRAPH BOUNDARIES
         if area == graphDimensions['ymax']:
-            shade_area = npminimum(npmaximum(coordinates['y'], graphDimensions['ymax']), graphDimensions['ymax'])
+            shadeArea = npminimum(npmaximum(coordinates['y'], graphDimensions['ymax']), graphDimensions['ymax'])
         elif area == graphDimensions['ymin']:
-            shade_area = npmaximum(npminimum(coordinates['y'], graphDimensions['ymin']), graphDimensions['ymin'])
-        # Adjust y-coordinates that exceed the graph dimensions
+            shadeArea = npmaximum(npminimum(coordinates['y'], graphDimensions['ymin']), graphDimensions['ymin'])
+        # ! ADJUST Y VALUES TO SHADE AREA AND ENFORCE GRAPH BOUNDARIES
         coordinates['y'] = npmaximum(npminimum(coordinates['y'], graphDimensions['ymax']), graphDimensions['ymin'])
         # Fill the specified area
-        plt.fill_between(coordinates['x'], shade_area, coordinates['y'], alpha=0.5)
+        plt.fill_between(coordinates['x'], shadeArea, coordinates['y'], alpha=0.5)
     # For systems of equations
     else:
         # Generate coordinates
@@ -177,27 +177,34 @@ def shade_area(equations, points, selectedOption):
         # Set coordinates1 to the function with the higher coordinates on the left side
         if coordinates1[1][0] < coordinates2[1][0]:
             coordinates1, coordinates2 = coordinates2, coordinates1
-        # Determine which side to shade then shade
+        # ! DETEMINE AREA TO SHADE AND ENFORCE GRAPH BOUNDARIES
         if area == 'l': # left
-            shade_start = max(graphDimensions['ymin'], npmin(coordinates1[1]))
-            shade_end = min(graphDimensions['ymax'], npmax(coordinates1[1]))
-            plt.fill_between(xValues, npmaximum(npminimum(coordinates1[1], coordinates2[1]), shade_start), npminimum(shade_end, npmaximum(coordinates1[1], coordinates2[1])), where=(coordinates1[1] > coordinates2[1]) & (xValues >= npmin(coordinates1[0])) & (xValues <= npmax(coordinates2[0])), alpha=0.5)
+            # Initialize shade start and end
+            shadeStart = max(graphDimensions['ymin'], npmin(coordinates1[1]))
+            shadeEnd = min(graphDimensions['ymax'], npmax(coordinates1[1]))
+            # Fill the specified area
+            plt.fill_between(xValues, npmaximum(npminimum(coordinates1[1], coordinates2[1]), shadeStart), npminimum(shadeEnd, npmaximum(coordinates1[1], coordinates2[1])), where=(coordinates1[1] > coordinates2[1]) & (xValues >= npmin(coordinates1[0])) & (xValues <= npmax(coordinates2[0])), alpha=0.5)
         elif area == 'r': # right
-            shade_start = max(graphDimensions['ymin'], npmin(coordinates1[1]))
-            shade_end = min(graphDimensions['ymax'], npmax(coordinates2[1]))
-            plt.fill_between(xValues, npmaximum(npminimum(coordinates1[1], coordinates2[1]), shade_start), npminimum(shade_end, npmaximum(coordinates1[1], coordinates2[1])), where=(coordinates1[1] < coordinates2[1]) & (xValues >= npmin(coordinates1[0])) & (xValues <= npmax(coordinates2[0])), alpha=0.5)
+            # Initialize shade start and end
+            shadeStart = max(graphDimensions['ymin'], npmin(coordinates1[1]))
+            shadeEnd = min(graphDimensions['ymax'], npmax(coordinates2[1]))
+            # Fill the specified area
+            plt.fill_between(xValues, npmaximum(npminimum(coordinates1[1], coordinates2[1]), shadeStart), npminimum(shadeEnd, npmaximum(coordinates1[1], coordinates2[1])), where=(coordinates1[1] < coordinates2[1]) & (xValues >= npmin(coordinates1[0])) & (xValues <= npmax(coordinates2[0])), alpha=0.5)
         elif area == 'a': # above
-            shade_area = npmaximum(coordinates1[1], coordinates2[1])
-            plt.fill_between(xValues, npminimum(shade_area, graphDimensions['ymax']), graphDimensions['ymax'], alpha=0.5)
+            # Initialize shade area
+            shadeArea = npmaximum(coordinates1[1], coordinates2[1])
+            # Fill the specified area
+            plt.fill_between(xValues, npminimum(shadeArea, graphDimensions['ymax']), graphDimensions['ymax'], alpha=0.5)
         elif area == 'b': # below
-            shade_area = npminimum(coordinates1[1], coordinates2[1])
-            plt.fill_between(xValues, graphDimensions['ymin'], npmaximum(shade_area, graphDimensions['ymin']), alpha=0.5)
+            # Initialize shade area
+            shadeArea = npminimum(coordinates1[1], coordinates2[1])
+            # Fill the specified area
+            plt.fill_between(xValues, graphDimensions['ymin'], npmaximum(shadeArea, graphDimensions['ymin']), alpha=0.5)
     # ! SHOW GRAPH
     show()
     # ! EXIT GRAPH
     input("Press enter to exit graph.")
-    close()
-    return
+    return close()
 
 
 # * FUNCTIONS
