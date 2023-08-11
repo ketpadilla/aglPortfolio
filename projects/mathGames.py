@@ -71,7 +71,7 @@ def show_graph(showStatus):
     return plt.show()
 
 
-# VALIDATE GUESS 1
+# VALIDATE IF GUESS IS EMPTY
 def guess_empty(guess, function):
     # Check if function was called from check_scatter
     if function == 'check_scatter':
@@ -86,8 +86,8 @@ def guess_empty(guess, function):
     return False
 
 
-# VALIDATE GUESS 2
-def guess_integer(guess, function):
+# VALIDATE IF GUESS IS A NUMBER
+def guess_number(guess, function):
     # Check if function was called from check_scatter
     if function == 'check_scatter':
         # Separate user input into x and y coordinates
@@ -99,19 +99,22 @@ def guess_integer(guess, function):
             return True
         return False
     # Assume guess is only one number
-    # Remove "-" sign then check if the input can be converted to an integer
-    if guess.replace('-','').isdigit() == False:
-        print("Input is not an integer.")
+    # Check if the input can be converted to a float
+    try:
+        guess = float(guess)
+    except ValueError:
+        print("Input is not a number.")
         return True
     return False
 
 
-# VALIDATE GUESS 3
+# COMBINE VALIDATION FUNCTIONS
 def guess_validate(guess):
-    # Check if both validations are false
+    # Check if guess is empty or incomplete
     if guess_empty(guess, stack()[1][3]):
         return True
-    if guess_integer(guess, stack()[1][3]):
+    # Check if guess is not a number
+    if guess_number(guess, stack()[1][3]):
         return True
     # Else, proceed
     return False
@@ -209,6 +212,18 @@ def divide():
     return check_algebra(answer)
 
 
+# GENERATE TWO-STEP EQUATION QUESTION
+def x():
+    # Generate random numbers
+    a, b, c = randint(1, 25), randint(-50, 150), randint(-50, 150)
+    # Print question
+    print(f"\nSolve for x:\n{a}x + {b} = {c}\nRound to two decimal places.")
+    # Store answer
+    answer = round((c - b) / a, 2)
+    # Check answer and return score
+    return check_algebra(answer)
+
+
 # * FUNCTIONS
 # SCATTER PLOT GAME
 def scatter_plot():
@@ -236,12 +251,15 @@ def algebra_practice():
     # Ask for the number of rounds
     rounds = ask_rounds()
     # Start game
-    for i in range(0, rounds):
+    for i in range(rounds):
+        # Print round number
+        print(f"\nRound {i + 1}")
+        # Generate questions
         score = add_subtract('add')
         score = add_subtract('subtract')
         score = multiply()
         score = divide()
-        score = x()
+        for j in range(3): score = x()
     return return_score(score)
 
 
@@ -250,10 +268,13 @@ def projectiles():
     # Ask for the number of rounds
     rounds = ask_rounds()
     # Initialize variables
-
+    graphDimensions = {'xmin': -15, 'ymin': -15, 'xmax': 15, 'ymax': 15}
+    fontSize = set_fontsize(graphDimensions)
     # Start game
-    # TODO
-
+    for i in range(0, rounds):
+        # Create graph
+        answer = graph(i, graphDimensions, fontSize)
+        # TODO
     return return_score(score)
 
 
