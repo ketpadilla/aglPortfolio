@@ -10,12 +10,14 @@ from inspect import stack
 def ask_rounds():
     while True:
         try:
+            # ! ASK FOR THE NUMBER OF QUESTIONS
             rounds = int(input("\nHow many rounds would you like to play? "))
             if rounds < 1:
                 print("Please enter a positive integer.")
                 continue
             return rounds
         except ValueError:
+            # ! INVALID INPUT
             print("Please enter a positive integer.")
             continue
 
@@ -65,8 +67,10 @@ def show_graph(showStatus):
         # Prompt input if function is not being called from check_scatter
         if stack()[1][3] != 'check_scatter':
             input("Press enter to close the graph.")
+        # ! CLOSE GRAPH
         plt.close()
         return plt.ioff()
+    # ! SHOW GRAPH
     plt.ion()
     return plt.show()
 
@@ -75,14 +79,15 @@ def show_graph(showStatus):
 def guess_empty(guess, function):
     # Check if function was called from check_scatter
     if function == 'check_scatter':
-        # Check if guess is empty or incomplete
+        # ! CHECK IF GUESS IS EMPTY OR INCOMPLETE
         if guess == '' or guess.count(',') != 1:
             print("Input is empty or incomplete.")
             return True
-    # Check if guess is only empty
+    # ! CHECK IF GUESS IS EMPTY
     if guess == '':
         print("Input is empty.")
         return True
+    # Guess is not empty
     return False
 
 
@@ -93,18 +98,20 @@ def guess_number(guess, function):
         # Separate user input into x and y coordinates
         guess = guess.split(',')
         x, y = guess[0].strip().replace('(',''), guess[1].strip().replace(')','')
-        # Remove "-" sign then check if the input can be converted to an integer
+        # ! REMOVE NEGATIVE SIGN THEN CHECK IF X OR Y IS NOT AN INTEGER
         if x.replace('-','').isdigit() == False or y.replace('-','').isdigit() == False:
             print("Either x or y is not an integer.")
             return True
         return False
-    # Assume guess is only one number
-    # Check if the input can be converted to a float
+    # ! CHECK IF GUESS IS NOT A NUMBER
     try:
+        # Convert guess to float
         guess = float(guess)
     except ValueError:
+        # Invalid input
         print("Input is not a number.")
         return True
+    # Guess is a number
     return False
 
 
@@ -116,15 +123,15 @@ def guess_validate(guess):
     # Check if guess is not a number
     if guess_number(guess, stack()[1][3]):
         return True
-    # Else, proceed
+    # ! GUESS IS VALID
     return False
 
 
 # CHECK SCATTER PLOT ANSWER
 def check_scatter(guess, answer, score):
-    # Increment total score
+    # ! INCREMENT TOTAL SCORE
     score['total'] += 1
-    # Check if guess is valid
+    # ! CHECK IF GUESS IS VALID
     if guess_validate(guess):
         # Print correct answer if guess is invalid
         print(f"The correct answer was ({answer[0]},{answer[1]}).")
@@ -132,7 +139,7 @@ def check_scatter(guess, answer, score):
     # Separate user input into x and y coordinates
     guess = guess.split(',')
     x, y = guess[0].strip().replace('(',''), guess[1].strip().replace(')','')
-    # Check if the answer is correct
+    # ! CHECK IF GUESS IS CORRECT
     if int(x) == int(answer[0]) and int(y) == int(answer[1]):
         print("Correct!")
         score['correct'] += 1
@@ -154,14 +161,14 @@ def return_score(score):
 def check_algebra(answer):
     # Get user input
     guess = input("x = ")
-    # Increment total score
+    # ! INCREMENT TOTAL SCORE
     score['total'] += 1
-    # Check if guess is valid
+    # ! CHECK IF GUESS IS VALID
     if guess_validate(guess):
         # Print correct answer if guess is invalid
         print(f"The correct answer was {answer}.")
         return score
-    # Check if the guess is correct
+    # ! CHECK IF GUESS IS CORRECT
     if float(guess) == float(answer):
         print("Correct!")
         score['correct'] += 1
@@ -171,18 +178,19 @@ def check_algebra(answer):
 
 # GENERATE ADDITION AND SUBTRACTION QUESTION
 def add_subtract(operation):
-    # Check if operation is addition or subtraction
+    # ! ADDITION
     if operation == 'add':
         # Generate random numbers
         a, b = randint(-50, 100), randint(0, 150)
         # Print question
         print(f"\nSolve for x:\n{a} + x = {b}")
+    # ! SUBTRACTION
     else:
         # Generate random numbers
         a, b = randint(1, 150), randint(-50, 100)
         # Print question
         print(f"\nSolve for x:\n{a} + x = {b}")
-    # Store answer
+    # ! STORE ANSWER
     answer = b - a
     # Get user input, then validate and check answer and return score
     return check_algebra(answer)
@@ -194,7 +202,7 @@ def multiply():
     a, b = randint(1, 25), randint(2, 30)
     # Print question
     print(f"\nSolve for x:\n{a}x = {b}\nRound to two decimal places.")
-    # Store answer
+    # ! STORE ANSWER
     answer = round(b / a, 2)
     # Check answer and return score
     return check_algebra(answer)
@@ -206,7 +214,7 @@ def divide():
     a, b = randint(2, 30), randint(1, 45)
     # Print question
     print(f"\nSolve for x:\nx/{a} = {b}")
-    # Store answer
+    # ! STORE ANSWER
     answer = b * a
     # Check answer and return score
     return check_algebra(answer)
@@ -218,7 +226,7 @@ def x():
     a, b, c = randint(1, 25), randint(-50, 150), randint(-50, 150)
     # Print question
     print(f"\nSolve for x:\n{a}x + {b} = {c}\nRound to two decimal places.")
-    # Store answer
+    # ! STORE ANSWER
     answer = round((c - b) / a, 2)
     # Check answer and return score
     return check_algebra(answer)
@@ -235,11 +243,11 @@ def scatter_plot():
     fontSize = set_fontsize(graphDimensions)
     # Start game
     for i in range(0, rounds):
-        # Create graph
+        # ! CREATE GRAPH
         answer = graph(i, graphDimensions, fontSize)
         # Ask for the coordinates
         guess = input("Enter the coordinates of the point (x,y): ")
-        # Validate the answer
+        # ! VALIDATE AND CHECK ANSWER
         score = check_scatter(guess, answer, score)
         # Close graph
         plt.close()
@@ -254,7 +262,7 @@ def algebra_practice():
     for i in range(rounds):
         # Print round number
         print(f"\nRound {i + 1}")
-        # Generate questions
+        # ! GENERATE QUESTIONS
         score = add_subtract('add')
         score = add_subtract('subtract')
         score = multiply()
