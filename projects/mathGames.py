@@ -4,6 +4,7 @@ from random import randint
 from numpy import linspace, sqrt, sin, cos, tan, arctan
 from inspect import stack
 
+
 # * HELPER FUNCTIONS
 # ASK FOR THE NUMBER OF QUESTIONS
 def ask_rounds():
@@ -70,21 +71,64 @@ def show_graph(showStatus):
     return plt.show()
 
 
+# VALIDATE GUESS 1
+def guess_empty(guess, function):
+    # Check if function was called from check_scatter
+    if function == 'check_scatter':
+        # Check if guess is empty or incomplete
+        if guess == '' or guess.count(',') != 1:
+            print("Input is empty or incomplete.")
+            return True
+    # Check if guess is only empty
+    if guess == '':
+        print("Input is empty.")
+        return True
+    return False
+
+
+# VALIDATE GUESS 2
+def guess_integer(guess, function):
+    # Check if function was called from check_scatter
+    if function == 'check_scatter':
+        # Separate user input into x and y coordinates
+        guess = guess.split(',')
+        x, y = guess[0].strip().replace('(',''), guess[1].strip().replace(')','')
+        # Remove "-" sign then check if the input can be converted to an integer
+        if x.replace('-','').isdigit() == False or y.replace('-','').isdigit() == False:
+            print("Either x or y is not an integer.")
+            return True
+        return False
+    # Assume guess is only one number
+    # Remove "-" sign then check if the input can be converted to an integer
+    if guess.replace('-','').isdigit() == False:
+        print("Input is not an integer.")
+        return True
+    return False
+
+
+# VALIDATE GUESS 3
+def guess_validate(guess):
+    # Check if both validations are false
+    if guess_empty(guess, stack()[1][3]):
+        return True
+    if guess_integer(guess, stack()[1][3]):
+        return True
+    # Else, proceed
+    return False
+
+
 # CHECK SCATTER PLOT ANSWER
 def check_scatter(guess, answer, score):
     # Increment total score
     score['total'] += 1
-    # Check if guess is empty or incomplete
-    if guess == '' or guess.count(',') != 1:
-        print(f"Answer is invalid, empty or incomplete. The correct answer was ({answer[0]},{answer[1]}).")
+    # Check if guess is valid
+    if guess_validate(guess):
+        # Print correct answer if guess is invalid
+        print(f"The correct answer was ({answer[0]},{answer[1]}).")
         return score
     # Separate user input into x and y coordinates
     guess = guess.split(',')
     x, y = guess[0].strip().replace('(',''), guess[1].strip().replace(')','')
-    # Remove "-" sign then check if the input can be converted to an integer
-    if x.replace('-','').isdigit() == False or y.replace('-','').isdigit() == False:
-        print(f"Either x or y is not a valid integer. The correct answer was ({answer[0]},{answer[1]}).")
-        return score
     # Check if the answer is correct
     if int(x) == int(answer[0]) and int(y) == int(answer[1]):
         print("Correct!")
@@ -103,13 +147,38 @@ def return_score(score):
     return score
 
 
+# GENERATE ADDITION QUESTION
+def add():
+    # Increment total score
+    score['total'] += 1
+    # Generate random numbers
+    a, b = randint(-50, 100), randint(-50, 100)
+    # Store answer
+    answer = b - a
+    # Print question
+    print(f"\nSolve for x:\nx + {a} = {b}")
+    # Get user input
+    guess = input("x = ")
+    # Check if guess is valid
+    if guess_validate(guess):
+        # Print correct answer if guess is invalid
+        print(f"The correct answer was {answer}.")
+        return score
+    # Check if the answer is correct
+    if int(guess) == answer:
+        print("Correct!")
+        score['correct'] += 1
+        return score
+    return score
+
+
 # * FUNCTIONS
 # SCATTER PLOT GAME
 def scatter_plot():
+    global score
     # Ask for the number of rounds
     rounds = ask_rounds()
     # Initialize variables
-    score = {'correct': 0, 'total': 0}
     graphDimensions = {'xmin': -15, 'ymin': -15, 'xmax': 15, 'ymax': 15}
     fontSize = set_fontsize(graphDimensions)
     # Start game
@@ -129,11 +198,13 @@ def scatter_plot():
 def algebra_practice():
     # Ask for the number of rounds
     rounds = ask_rounds()
-    # Initialize variables
-
     # Start game
-    # TODO
-
+    for i in range(0, rounds):
+        score = add()
+        score = subtract()
+        score = multiply()
+        score = divide()
+        score = x()
     return return_score(score)
 
 
