@@ -147,29 +147,66 @@ def return_score(score):
     return score
 
 
-# GENERATE ADDITION QUESTION
-def add():
-    # Increment total score
-    score['total'] += 1
-    # Generate random numbers
-    a, b = randint(-50, 100), randint(-50, 100)
-    # Store answer
-    answer = b - a
-    # Print question
-    print(f"\nSolve for x:\nx + {a} = {b}")
+# CHECK ALGEBRA ANSWER
+def check_algebra(answer):
     # Get user input
     guess = input("x = ")
+    # Increment total score
+    score['total'] += 1
     # Check if guess is valid
     if guess_validate(guess):
         # Print correct answer if guess is invalid
         print(f"The correct answer was {answer}.")
         return score
-    # Check if the answer is correct
-    if int(guess) == answer:
+    # Check if the guess is correct
+    if float(guess) == float(answer):
         print("Correct!")
         score['correct'] += 1
         return score
     return score
+
+
+# GENERATE ADDITION AND SUBTRACTION QUESTION
+def add_subtract(operation):
+    # Check if operation is addition or subtraction
+    if operation == 'add':
+        # Generate random numbers
+        a, b = randint(-50, 100), randint(0, 150)
+        # Print question
+        print(f"\nSolve for x:\n{a} + x = {b}")
+    else:
+        # Generate random numbers
+        a, b = randint(1, 150), randint(-50, 100)
+        # Print question
+        print(f"\nSolve for x:\n{a} + x = {b}")
+    # Store answer
+    answer = b - a
+    # Get user input, then validate and check answer and return score
+    return check_algebra(answer)
+
+
+# GENERATE MULTIPLICATION QUESTION
+def multiply():
+    # Generate random numbers
+    a, b = randint(1, 25), randint(2, 30)
+    # Print question
+    print(f"\nSolve for x:\n{a}x = {b}\nRound to two decimal places.")
+    # Store answer
+    answer = round(b / a, 2)
+    # Check answer and return score
+    return check_algebra(answer)
+
+
+# GENERATE DIVISION QUESTION
+def divide():
+    # Generate random numbers
+    a, b = randint(2, 30), randint(1, 45)
+    # Print question
+    print(f"\nSolve for x:\nx/{a} = {b}")
+    # Store answer
+    answer = b * a
+    # Check answer and return score
+    return check_algebra(answer)
 
 
 # * FUNCTIONS
@@ -200,8 +237,8 @@ def algebra_practice():
     rounds = ask_rounds()
     # Start game
     for i in range(0, rounds):
-        score = add()
-        score = subtract()
+        score = add_subtract('add')
+        score = add_subtract('subtract')
         score = multiply()
         score = divide()
         score = x()
