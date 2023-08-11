@@ -1,8 +1,8 @@
 # LIBRARIES
 import matplotlib.pyplot as plt
 from random import randint
-from numpy import linspace, sqrt, sin, cos, tan, arctan
 from inspect import stack
+from numpy import linspace, sqrt, sin, cos, tan, arctan
 
 
 # * HELPER FUNCTIONS
@@ -19,6 +19,21 @@ def ask_rounds():
         except ValueError:
             # ! INVALID INPUT
             print("Please enter a positive integer.")
+            continue
+
+
+# ASK USER IF THEY WANT TO PLAY AGAIN
+def ask_playAgain():
+    while True:
+        try:
+            # Ask user if they want to play again
+            playAgain = input("Would you like to play again? (y/n): ")
+            if playAgain.lower() == "y" or playAgain.lower() == "n":
+                return playAgain
+            print("Please enter y or n.")
+        except ValueError:
+            # ! INVALID INPUT
+            print("Please enter y or n.")
             continue
 
 
@@ -56,7 +71,7 @@ def graph(round, graphDimensions, fontSize):
         show_graph(True)
         return answer
     # ! PROJECTILES
-    # TODO
+    # TODO ADOPT CODE FROM PROJECTILEGAME.PY
     print("projectiles")
     return answer
 
@@ -65,6 +80,7 @@ def graph(round, graphDimensions, fontSize):
 def show_graph(showStatus):
     if showStatus == False:
         # Prompt input if function is not being called from check_scatter
+        # TODO REMOVE IF UNNECESSARY FOR PROJECTILES
         if stack()[1][3] != 'check_scatter':
             input("Press enter to close the graph.")
         # ! CLOSE GRAPH
@@ -313,8 +329,11 @@ def main(options):
     selectedOption = menu(options)
     # Call the function based on the user's choice
     score = options.get(selectedOption[0], lambda: print("Error: Invalid option."))()
-    # TODO: Prompt user to play again
-    return
+    # Ask user if they want to play again
+    if ask_playAgain() == 'y':
+        main(options)
+    # Print final score and message
+    return print(f"\nFinal score: {score['correct']}/{score['total']}\nThanks for playing!")
 
 
 # * RUN PROGRAM
