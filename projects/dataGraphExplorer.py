@@ -7,6 +7,11 @@
 
 ## PRINT HEADINGS AND FIRST TWO ROWS
 def print_headings():
+    # Get the headings
+    headings = list(file.columns)
+    # Get the first two rows
+    firstTwoRows = file.head(2)
+    #TODO 
     return print("good1")
 ## STORE COLUMN NAMES AS LIST
 
