@@ -17,12 +17,13 @@ def print_headings():
 ## DYNAMIC: DIFFERENT COLUMN COMBINATIONS AND INTERPRET GRAPHS
 
 # LIBRARIES
+import pandas as pd
 
 
 # * HELPER FUNCTIONS
 # GET CVS FILE
 def get_file():
-    fileOptions = ['upload', 'url', 'default']
+    fileOptions = ['upload', 'url', 'demo']
     # Ask user how they want to get the file
     while True:
         print("How would you like to get the file?")
@@ -36,12 +37,16 @@ def get_file():
         print(f"\n {userChoice} is not a valid option. Please try again.") # print error message if invalid and try again
     # Get the file
     if userChoice == 1: # upload
-        print("upload") #TODO
+        # Ask user for file
+        #TODO Last in colab
+        ...
     elif userChoice == 2: # url
-        print("url") #TODO
+        # Ask user for url
+        url = input("Enter the url: ")
     elif userChoice == 3: # default
-        print("default") #TODO
-    return
+        # From link
+        url = 'https://raw.githubusercontent.com/justmarkham/DAT8/master/data/chipotle.tsv'
+    return pd.read_csv(url) # return the file
 
 
 # * FUNCTIONS
@@ -52,7 +57,7 @@ file = []
 
 # MENU SELECTION
 def menu():
-    global options, graphDimensions, fontSize
+    global options
     while True:
         # Print the options
         print("\nWhat do you want to do with the file?")
