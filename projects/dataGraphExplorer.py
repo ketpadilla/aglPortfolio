@@ -20,6 +20,7 @@ def get_df():
 def get_file():
     # Initialize and print options
     optionsFile = {'a': 'Upload a CSV file', 'b': 'Provide a url', 'c': 'Use a demo file'}
+    print("How would you like to provide the CSV file?")
     for key, value in optionsFile.items():
         print(f"{key}. {value}")
     # Get user's choice
@@ -66,6 +67,7 @@ def get_demoFile():
     # Initialize and print options
     links = {'a': 'https://people.sc.fsu.edu/~jburkardt/data/csv/airtravel.csv', 'b': 'https://people.sc.fsu.edu/~jburkardt/data/csv/hurricanes.csv', 'c': 'https://people.sc.fsu.edu/~jburkardt/data/csv/hw_200.csv'}
     optionsDemo = {'a': 'Air Travel Data', 'b': 'Hurricane Data', 'c': 'Height and Weight Data'}
+    print("Which demo file would you like to use?")
     for key, value in optionsDemo.items():
         print(f"{key}. {value}")
     # Get user's choice
@@ -191,11 +193,13 @@ def show_line_graph():
 options = {'a': print_headings, 'b': print_first_two_rows, 'c': print_cvs, 'd': show_scatter_plot, 'e': show_line_graph}
 df = []
 
+
 # MENU SELECTION
 def menu():
     global options
     while True:
         # Print options
+        print("\nWhat would you like to do?")
         for key, value in options.items():
             print(f"{key}. {value.__name__.replace('_',' ')}")
         # Get the user's choice
